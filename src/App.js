@@ -1,6 +1,14 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+// import { bindActionCreators } from 'redux';
+// import { actionCreators } from './state/index';
+
 import './App.css';
+import { fetchCustomers } from './asyncActions/customers';
+import {
+	addCustomerAction,
+	removeCustomerAction
+} from './store/customerReducer';
 
 export default function App() {
 	const dispatch = useDispatch();
@@ -20,28 +28,43 @@ export default function App() {
 			name,
 			id: Date.now()
 		};
-		dispatch({ type: 'ADD_CUSTOMER', payload: customer });
+		dispatch(addCustomerAction(customer));
+	};
+
+	const removeCustomer = (customer) => {
+		dispatch(removeCustomerAction(customer.id));
 	};
 	return (
-		<div className={'app'}>
-			<div style={{ fontSize: '3rem', marginBottom: 10 }}>Баланс: {cash}</div>
+		<div className="App">
+			<div style={{ fontSize: '3rem', marginBottom: 10 }}>Total: {cash}</div>
 			<div style={{ display: 'flex' }}>
 				<button onClick={() => addCash(Number(prompt()))}>Add money</button>
 				<button onClick={() => getCash(Number(prompt()))}>Get money</button>
-				<button onClick={() => addCustomer(prompt())}>Add customers</button>
-				<button onClick={() => getCash(Number(prompt()))}>Customer off</button>
+				<button onClick={() => addCustomer(prompt())}>Add customer</button>
+				<button onClick={() => dispatch(fetchCustomers())}>
+					Get Data customer
+				</button>
 			</div>
-			<div>
-				{customers.length > 0 ? (
-					<div>
-						{customers.map((customers) => (
-							<div>{customers.name}</div>
-						))}
-					</div>
-				) : (
-					<div style={{ fontSize: '2rem', marginTop: 20 }}>No Customers!!</div>
-				)}
-			</div>
+			{customers.length > 0 ? (
+				<div>
+					{customers.map((customer) => (
+						<div
+							onClick={() => removeCustomer(customer)}
+							style={{
+								fontSize: '2rem',
+								border: '1px solid black',
+								padding: '10px',
+								marginTop: '5px',
+								width: '12rem',
+								textAlign: 'center'
+							}}>
+							{customer.name}
+						</div>
+					))}
+				</div>
+			) : (
+				<div style={{ fontSize: '2rem', marginTop: 20 }}>No Customers!!</div>
+			)}
 		</div>
 	);
 }
